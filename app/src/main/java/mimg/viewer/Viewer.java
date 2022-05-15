@@ -7,19 +7,29 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
+import java.io.File;
 
 
 public class Viewer extends Application {
-
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/scene.fxml"));
+        FXMLLoader root = FXMLLoader.load(getClass().getResource("/scene.fxml"));
 
-        Scene scene = new Scene(root);
+        // TODO pass arguments to controller
+        FXMLController controller = root.getController();
+        String path = getParameters().getRaw().toString();
+        if (path.length() > 0) {
+            File img_path = new File(path);
+            controller.setDir(img_path.getParent());
+            controller.setImg(img_path.getName());
+        }
+
+        Scene scene = new Scene(root.load());
         scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
 
-        stage.setTitle("JavaFX and Gradle");
         stage.setScene(scene);
         stage.show();
     }
