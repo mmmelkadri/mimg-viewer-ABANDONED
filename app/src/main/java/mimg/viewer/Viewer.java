@@ -7,7 +7,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -16,22 +15,35 @@ import java.io.File;
 public class Viewer extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader root = FXMLLoader.load(getClass().getResource("/scene.fxml"));
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scene.fxml"));
+            Parent root = loader.load();
+            // TODO pass arguments to controller
+            FXMLController controller = loader.getController();
 
-        // TODO pass arguments to controller
-        FXMLController controller = root.getController();
-        String path = getParameters().getRaw().toString();
-        if (path.length() > 0) {
-            File img_path = new File(path);
-            controller.setDir(img_path.getParent());
-            controller.setImg(img_path.getName());
+            // if opened using a file argument
+            /* TODO
+            String path = getParameters().getRaw().toString();
+            if (path.length() > 0) {
+                File img_path = new File(path);
+                controller.setDir(img_path.getParent());
+                controller.setImg(img_path.getPath());
+            }
+             */
+
+            controller.initialize();
+
+            // TODO set open resolution to percent based
+            Scene scene = new Scene(root, 1280, 720);
+            scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+
+            stage.setTitle("mimg viewer");
+            // TODO set icon
+            stage.setScene(scene);
+            stage.show();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
-
-        Scene scene = new Scene(root.load());
-        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
-
-        stage.setScene(scene);
-        stage.show();
     }
 
     public static void main(String[] args) {
