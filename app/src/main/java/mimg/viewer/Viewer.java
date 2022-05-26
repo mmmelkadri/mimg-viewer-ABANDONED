@@ -31,8 +31,6 @@ public class Viewer extends Application {
             }
              */
 
-            controller.initialize();
-
             // TODO set open resolution to percent based
             Scene scene = new Scene(root, 1280, 720);
             scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
