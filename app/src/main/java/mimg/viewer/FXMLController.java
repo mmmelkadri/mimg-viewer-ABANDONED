@@ -3,12 +3,17 @@ package mimg.viewer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.util.Callback;
 import net.kurobako.gesturefx.GesturePane;
 
 import java.io.File;
@@ -19,6 +24,7 @@ public class FXMLController {
     private boolean showHiddenFolders = false;
     private final String imageRegex = "(.+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)";
     private final ImageView imageView = new ImageView();
+    private Stage stage;
     @FXML private AnchorPane imageAnchor;
     @FXML private MenuBar menuBar;
     @FXML private GesturePane gesturePane;
@@ -36,6 +42,31 @@ public class FXMLController {
         else
             ((MenuItem) event.getSource()).setText("Show Hidden Folders");
 
+        setList();
+    }
+
+    @FXML
+    private void openImg(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Image");
+
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Files", "*.jpeg", "*.jpg", "*.png", "*.webp",
+                        "*.bmp", "*.gif", "*.tiff", "*.tif", "*.JPG","*.JPEG", "*.PNG", "*.TIFF", "*.TIF"),
+                new FileChooser.ExtensionFilter(".jpg files", "*.jpg", "*.jpeg",
+                        "*.JPG", "*.JPEG"),
+                new FileChooser.ExtensionFilter(".png files", "*.PNG", "*.png"),
+                new FileChooser.ExtensionFilter(".bmp files", "*.bmp"),
+                new FileChooser.ExtensionFilter(".webp files", "*.webp"),
+                new FileChooser.ExtensionFilter(".gif files", "*.gif"),
+                new FileChooser.ExtensionFilter(".tiff files", "*.tif", "*.tiff",
+                        "*.TIF", "*.TIFF")
+        );
+        File file = fileChooser.showOpenDialog(stage);
+        setDir(file.getParent());
+        setImg(file.getName());
+
+        setCanvas();
         setList();
     }
 
@@ -82,6 +113,23 @@ public class FXMLController {
         // item is an image or a directory (not hidden or showHiddenFolders)
         listView.getItems().addAll(curr_dir.list((dir, name) -> name.matches(imageRegex) ||
                 (Files.isDirectory(Paths.get(dir + "/" + name))) && (!name.startsWith(".") || showHiddenFolders)));
+
+        // TODO add more customization
+        listView.setCellFactory(new Callback<>() {
+            @Override
+            public ListCell<String> call(ListView<String> param) {
+                return new ListCell<>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setText(item);
+                        if (item != null && !item.matches(imageRegex)) {
+                            setTextFill(Color.ROYALBLUE);
+                        }
+                    }
+                };
+            }
+        });
     }
 
     void setCanvas() {
@@ -104,5 +152,9 @@ public class FXMLController {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
+    }
+
+    void setStage(Stage stage) {
+        this.stage = stage;
     }
 }

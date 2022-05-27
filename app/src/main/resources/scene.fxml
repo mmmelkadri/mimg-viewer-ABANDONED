@@ -37,6 +37,7 @@
    <top>
        <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
            <Menu mnemonicParsing="false" text="File">
+               <MenuItem onAction="#openImg" mnemonicParsing="false" text="Open"/>
            </Menu>
            <Menu mnemonicParsing="false" text="Edit">
                <MenuItem onAction="#setHidden" mnemonicParsing="false" text="Show Hidden Folders"/>
