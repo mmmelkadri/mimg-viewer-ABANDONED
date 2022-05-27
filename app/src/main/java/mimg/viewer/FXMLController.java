@@ -1,5 +1,6 @@
 package mimg.viewer;
 
+import javafx.beans.InvalidationListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -7,6 +8,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class FXMLController {
     @FXML private AnchorPane imageAnchor;
@@ -23,26 +26,28 @@ public class FXMLController {
 
         setCanvas();
         setList();
-    }
-
-    void setList() {
-        // TODO add parent directory as .. to dir_list
-        // TODO fix bug with isDirectory check
-        listView.getItems().addAll(curr_dir.list((dir, name) -> name.matches("([^\\s]+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)") ||
-                (new File(dir + name)).isDirectory()));
 
         listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (listView.getSelectionModel().getSelectedItem()
                     .matches("([^\\s]+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)")) {
                 setImg(newValue);
             } else {
-                setDir(curr_dir.toURI() + newValue);
+                setDir(curr_dir.toString() + "/" + newValue);
+                listView.getItems().clear();
+                listView.getSelectionModel().clearSelection();
                 setList();
             }
-            // TODO add option for .. to go to parent dir if it exists
-
             setCanvas();
         });
+    }
+
+    void setList() {
+        // TODO fix problem if empty folder
+
+        listView.getItems().add("..");
+
+        listView.getItems().addAll(curr_dir.list((dir, name) -> name.matches("([^\\s]+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)") ||
+                Files.isDirectory(Paths.get(dir + "/" + name))));
     }
 
     void setCanvas() {

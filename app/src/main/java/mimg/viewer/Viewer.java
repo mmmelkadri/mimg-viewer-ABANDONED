@@ -33,7 +33,7 @@ public class Viewer extends Application {
 
             // TODO set open resolution to percent based
             Scene scene = new Scene(root, 1280, 720);
-            scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+            // scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
 
             stage.setTitle("mimg viewer");
             // TODO set icon
@@ -47,5 +47,4 @@ public class Viewer extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
 }
