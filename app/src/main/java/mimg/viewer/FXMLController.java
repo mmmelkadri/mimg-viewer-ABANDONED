@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class FXMLController {
+    private final String imageRegex = "(.+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)";
     private final ImageView imageView = new ImageView();
     @FXML private AnchorPane imageAnchor;
     @FXML private GesturePane gesturePane;
@@ -37,11 +38,15 @@ public class FXMLController {
                 return;
 
             if (listView.getSelectionModel().getSelectedItem()
-                    .matches("([^\\s]+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)")) {
+                    .matches(imageRegex)) {
                 setImg(newValue);
                 setCanvas();
             } else {
-                setDir(curr_dir.toString() + "/" + newValue);
+                if (newValue.equals(".."))
+                    setDir(curr_dir.getParent());
+                else
+                    setDir(curr_dir.toString() + "/" + newValue);
+
                 Platform.runLater(() -> {
                     listView.getSelectionModel().clearSelection();
                     setList();
@@ -53,8 +58,9 @@ public class FXMLController {
 
     void setList() {
         listView.getItems().clear();
-        listView.getItems().add("..");
-        listView.getItems().addAll(curr_dir.list((dir, name) -> name.matches("([^\\s]+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)") ||
+        if (curr_dir.getParent() != null)
+            listView.getItems().add("..");
+        listView.getItems().addAll(curr_dir.list((dir, name) -> name.matches(imageRegex) ||
                 Files.isDirectory(Paths.get(dir + "/" + name))));
     }
 
