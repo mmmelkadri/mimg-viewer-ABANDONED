@@ -1,6 +1,6 @@
 package mimg.viewer;
 
-import javafx.beans.InvalidationListener;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -20,7 +20,6 @@ public class FXMLController {
     private Image curr_img = null;
 
     public void initialize() {
-        // TODO align image to center of imageAnchor
         imageView.fitWidthProperty().bind(imageAnchor.widthProperty());
         imageView.fitHeightProperty().bind(imageAnchor.heightProperty());
 
@@ -28,30 +27,33 @@ public class FXMLController {
         setList();
 
         listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            // TODO understand why below line fixes bug
+            if (newValue == null)
+                return;
+
             if (listView.getSelectionModel().getSelectedItem()
                     .matches("([^\\s]+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)")) {
                 setImg(newValue);
+                setCanvas();
             } else {
                 setDir(curr_dir.toString() + "/" + newValue);
-                listView.getItems().clear();
-                listView.getSelectionModel().clearSelection();
-                setList();
+                Platform.runLater(() -> {
+                    listView.getSelectionModel().clearSelection();
+                    setList();
+                    setCanvas();
+                });
             }
-            setCanvas();
         });
     }
 
     void setList() {
-        // TODO fix problem if empty folder
-
+        listView.getItems().clear();
         listView.getItems().add("..");
-
         listView.getItems().addAll(curr_dir.list((dir, name) -> name.matches("([^\\s]+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)") ||
                 Files.isDirectory(Paths.get(dir + "/" + name))));
     }
 
     void setCanvas() {
-        // display curr_img
         imageView.setImage(curr_img);
     }
 

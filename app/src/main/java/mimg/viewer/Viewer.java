@@ -22,13 +22,14 @@ public class Viewer extends Application {
             FXMLController controller = loader.getController();
 
             // if opened using a file argument
-            /* TODO
+            /* TODO test
             String path = getParameters().getRaw().toString();
             if (path.length() > 0) {
                 File img_path = new File(path);
                 controller.setDir(img_path.getParent());
                 controller.setImg(img_path.getPath());
             }
+
              */
 
             // TODO set open resolution to percent based
