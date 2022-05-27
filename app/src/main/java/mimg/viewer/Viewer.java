@@ -5,8 +5,10 @@ package mimg.viewer;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Viewer extends Application {
@@ -18,8 +20,8 @@ public class Viewer extends Application {
             FXMLController controller = loader.getController();
 
             // TODO if opened with image, set image as curr_img
-
-            Scene scene = new Scene(root, 1280, 720);
+            Rectangle2D screen = Screen.getPrimary().getBounds();
+            Scene scene = new Scene(root, screen.getWidth() * 0.9, screen.getHeight() * 0.8);
             // scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
 
             stage.setTitle("mimg viewer");
