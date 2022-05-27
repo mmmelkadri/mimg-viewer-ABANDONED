@@ -18,7 +18,7 @@ public class FXMLController {
     @FXML private GesturePane gesturePane;
     @FXML private ListView<String> listView;
 
-    private File curr_dir = new File(System.getProperty("user.home"));
+    private File curr_dir = new File(System.getProperty("user.dir"));
     private Image curr_img = null;
 
     public void initialize() {
@@ -32,7 +32,7 @@ public class FXMLController {
         setList();
 
         listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            // TODO understand why below line fixes bug
+            // TODO understand why line below fixes bug
             if (newValue == null)
                 return;
 
@@ -59,7 +59,7 @@ public class FXMLController {
     }
 
     void setCanvas() {
-        // TODO change zoom back to 100%
+        gesturePane.reset();
         imageView.setImage(curr_img);
     }
 

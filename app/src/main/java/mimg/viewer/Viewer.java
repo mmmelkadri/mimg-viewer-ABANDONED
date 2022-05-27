@@ -15,21 +15,10 @@ public class Viewer extends Application {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/scene.fxml"));
             Parent root = loader.load();
-            // TODO pass arguments to controller
             FXMLController controller = loader.getController();
 
-            // if opened using a file argument
-            /* TODO test
-            String path = getParameters().getRaw().toString();
-            if (path.length() > 0) {
-                File img_path = new File(path);
-                controller.setDir(img_path.getParent());
-                controller.setImg(img_path.getPath());
-            }
+            // TODO if opened with image, set image as curr_img
 
-             */
-
-            // TODO set open resolution to percent based
             Scene scene = new Scene(root, 1280, 720);
             // scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
 
