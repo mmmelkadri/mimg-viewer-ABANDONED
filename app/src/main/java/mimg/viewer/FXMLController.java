@@ -6,14 +6,16 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import net.kurobako.gesturefx.GesturePane;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class FXMLController {
+    private final ImageView imageView = new ImageView();
     @FXML private AnchorPane imageAnchor;
-    @FXML private ImageView imageView;
+    @FXML private GesturePane gesturePane;
     @FXML private ListView<String> listView;
 
     private File curr_dir = new File(System.getProperty("user.home"));
@@ -22,6 +24,9 @@ public class FXMLController {
     public void initialize() {
         imageView.fitWidthProperty().bind(imageAnchor.widthProperty());
         imageView.fitHeightProperty().bind(imageAnchor.heightProperty());
+        imageView.setPreserveRatio(true);
+
+        gesturePane.setContent(imageView);
 
         setCanvas();
         setList();
@@ -54,6 +59,7 @@ public class FXMLController {
     }
 
     void setCanvas() {
+        // TODO change zoom back to 100%
         imageView.setImage(curr_img);
     }
 

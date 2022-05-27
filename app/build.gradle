@@ -21,6 +21,10 @@ javafx {
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
+dependencies {
+    implementation 'net.kurobako:gesturefx:0.7.1'
+}
+
 application {
     mainClass = "mimg.viewer.Viewer"
     mainModule = "mimg"
