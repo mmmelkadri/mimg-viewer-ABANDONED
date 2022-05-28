@@ -106,6 +106,45 @@ public class FXMLController {
         });
     }
 
+    // TODO make previous() and next() smoother
+    void previous() {
+        int index = listView.getSelectionModel().getSelectedIndex();
+        String[] items = listView.getItems().toArray(new String[0]);
+        int l = items.length;
+
+        if (index < 0)  // no selection made
+            return;
+
+        // below equation needed to make java modulo non-negative
+        for (int i = (((index - 1) % l) + l) % l; i != index; i = (((i - 1) % l) + l) % l) {
+            if (items[i].matches(imageRegex)) {
+                listView.getSelectionModel().select(i);
+                setImg(items[i]);
+                setCanvas();
+                return;
+            }
+        }
+    }
+
+    void next() {
+        int index = listView.getSelectionModel().getSelectedIndex();
+        String[] items = listView.getItems().toArray(new String[0]);
+        int l = items.length;
+
+        if (index < 0)  // no selection made
+            return;
+
+        // below equation needed to make java modulo non-negative
+        for (int i = (((index + 1) % l) + l) % l; i != index; i = (((i + 1) % l) + l) % l) {
+            if (items[i].matches(imageRegex)) {
+                listView.getSelectionModel().select(i);
+                setImg(items[i]);
+                setCanvas();
+                return;
+            }
+        }
+    }
+
     void setList() {
         listView.getItems().clear();
         if (curr_dir.getParent() != null)
