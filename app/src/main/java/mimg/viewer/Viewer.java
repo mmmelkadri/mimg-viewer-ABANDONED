@@ -29,9 +29,9 @@ public class Viewer extends Application {
 
             scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
                 if (event.getCode().equals(KeyCode.LEFT))
-                    controller.previous();
+                    controller.previousImage();
                 else if (event.getCode().equals(KeyCode.RIGHT))
-                    controller.next();
+                    controller.nextImage();
             });
 
             stage.setTitle("mimg viewer");

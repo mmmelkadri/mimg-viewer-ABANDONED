@@ -21,8 +21,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class FXMLController {
-    private boolean showHiddenFolders = false;
     private final String imageRegex = "(.+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)";
+    private boolean showHiddenFolders = false;
     private final ImageView imageView = new ImageView();
     private Stage stage;
     @FXML private AnchorPane imageAnchor;
@@ -62,19 +62,21 @@ public class FXMLController {
                 new FileChooser.ExtensionFilter(".tiff files", "*.tif", "*.tiff",
                         "*.TIF", "*.TIFF")
         );
+
         File file = fileChooser.showOpenDialog(stage);
         setDir(file.getParent());
         setImg(file.getName());
 
         setCanvas();
         setList();
+
+        listView.getSelectionModel().select(file.getName());
     }
 
     public void initialize() {
         imageView.fitWidthProperty().bind(imageAnchor.widthProperty());
         imageView.fitHeightProperty().bind(imageAnchor.heightProperty());
         imageView.setPreserveRatio(true);
-
         gesturePane.setContent(imageView);
 
         menuBar.setUseSystemMenuBar(true);
@@ -84,8 +86,7 @@ public class FXMLController {
 
         listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             // TODO understand why line below fixes bug
-            if (newValue == null)
-                return;
+            if (newValue == null) return;
 
             if (listView.getSelectionModel().getSelectedItem()
                     .matches(imageRegex)) {
@@ -104,16 +105,30 @@ public class FXMLController {
                 });
             }
         });
+
+        // TODO add more customization
+        listView.setCellFactory(cellData -> new ListCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(item);
+                if (empty || item == null)
+                    setGraphic(null);
+                else if (!item.matches(imageRegex))
+                    setTextFill(Color.ROYALBLUE);
+                else
+                    setTextFill(Color.BLACK);
+            }
+        });
     }
 
     // TODO make previous() and next() smoother
-    void previous() {
+    void previousImage() {
         int index = listView.getSelectionModel().getSelectedIndex();
         String[] items = listView.getItems().toArray(new String[0]);
         int l = items.length;
 
-        if (index < 0)  // no selection made
-            return;
+        if (index < 0) return; // no selection made
 
         // below equation needed to make java modulo non-negative
         for (int i = (((index - 1) % l) + l) % l; i != index; i = (((i - 1) % l) + l) % l) {
@@ -126,13 +141,12 @@ public class FXMLController {
         }
     }
 
-    void next() {
+    void nextImage() {
         int index = listView.getSelectionModel().getSelectedIndex();
         String[] items = listView.getItems().toArray(new String[0]);
         int l = items.length;
 
-        if (index < 0)  // no selection made
-            return;
+        if (index < 0) return; // no selection made
 
         // below equation needed to make java modulo non-negative
         for (int i = (((index + 1) % l) + l) % l; i != index; i = (((i + 1) % l) + l) % l) {
@@ -152,23 +166,6 @@ public class FXMLController {
         // item is an image or a directory (not hidden or showHiddenFolders)
         listView.getItems().addAll(curr_dir.list((dir, name) -> name.matches(imageRegex) ||
                 (Files.isDirectory(Paths.get(dir + "/" + name))) && (!name.startsWith(".") || showHiddenFolders)));
-
-        // TODO add more customization
-        listView.setCellFactory(new Callback<>() {
-            @Override
-            public ListCell<String> call(ListView<String> param) {
-                return new ListCell<>() {
-                    @Override
-                    protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        setText(item);
-                        if (item != null && !item.matches(imageRegex)) {
-                            setTextFill(Color.ROYALBLUE);
-                        }
-                    }
-                };
-            }
-        });
     }
 
     void setCanvas() {
