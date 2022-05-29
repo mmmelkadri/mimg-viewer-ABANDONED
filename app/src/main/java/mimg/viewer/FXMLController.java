@@ -3,14 +3,14 @@ package mimg.viewer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -22,9 +22,10 @@ import java.nio.file.Paths;
 
 public class FXMLController {
     private final String imageRegex = "(.+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)";
-    private boolean showHiddenFolders = false;
+    private boolean showHiddenFolders = false, showList = true;
     private final ImageView imageView = new ImageView();
     private Stage stage;
+    @FXML private SplitPane splitPane;
     @FXML private AnchorPane imageAnchor;
     @FXML private MenuBar menuBar;
     @FXML private GesturePane gesturePane;
@@ -46,7 +47,57 @@ public class FXMLController {
     }
 
     @FXML
-    private void openImg(ActionEvent event) {
+    void setHiddenList(ActionEvent event) {
+        showList = !showList;
+        // TODO find better solution than setPrefWidth
+        if (showList) {
+            ((MenuItem) event.getSource()).setText("Hide List");
+            splitPane.setDividerPosition(0, 0.15);
+        }
+        else {
+            ((MenuItem) event.getSource()).setText("Show List");
+            splitPane.setDividerPosition(0, 0);
+        }
+    }
+
+    void previousImage() {
+        int index = listView.getSelectionModel().getSelectedIndex();
+        String[] items = listView.getItems().toArray(new String[0]);
+        int l = items.length;
+
+        if (index < 0) return; // no selection made
+
+        // below equation needed to make java modulo non-negative
+        for (int i = (((index - 1) % l) + l) % l; i != index; i = (((i - 1) % l) + l) % l) {
+            if (items[i].matches(imageRegex)) {
+                listView.getSelectionModel().select(i);
+                setImg(items[i]);
+                setCanvas();
+                return;
+            }
+        }
+    }
+
+    void nextImage() {
+        int index = listView.getSelectionModel().getSelectedIndex();
+        String[] items = listView.getItems().toArray(new String[0]);
+        int l = items.length;
+
+        if (index < 0) return; // no selection made
+
+        // below equation needed to make java modulo non-negative
+        for (int i = (((index + 1) % l) + l) % l; i != index; i = (((i + 1) % l) + l) % l) {
+            if (items[i].matches(imageRegex)) {
+                listView.getSelectionModel().select(i);
+                setImg(items[i]);
+                setCanvas();
+                return;
+            }
+        }
+    }
+
+    @FXML
+    private void openImg() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Image");
 
@@ -120,43 +171,6 @@ public class FXMLController {
                     setTextFill(Color.BLACK);
             }
         });
-    }
-
-    // TODO make previous() and next() smoother
-    void previousImage() {
-        int index = listView.getSelectionModel().getSelectedIndex();
-        String[] items = listView.getItems().toArray(new String[0]);
-        int l = items.length;
-
-        if (index < 0) return; // no selection made
-
-        // below equation needed to make java modulo non-negative
-        for (int i = (((index - 1) % l) + l) % l; i != index; i = (((i - 1) % l) + l) % l) {
-            if (items[i].matches(imageRegex)) {
-                listView.getSelectionModel().select(i);
-                setImg(items[i]);
-                setCanvas();
-                return;
-            }
-        }
-    }
-
-    void nextImage() {
-        int index = listView.getSelectionModel().getSelectedIndex();
-        String[] items = listView.getItems().toArray(new String[0]);
-        int l = items.length;
-
-        if (index < 0) return; // no selection made
-
-        // below equation needed to make java modulo non-negative
-        for (int i = (((index + 1) % l) + l) % l; i != index; i = (((i + 1) % l) + l) % l) {
-            if (items[i].matches(imageRegex)) {
-                listView.getSelectionModel().select(i);
-                setImg(items[i]);
-                setCanvas();
-                return;
-            }
-        }
     }
 
     void setList() {

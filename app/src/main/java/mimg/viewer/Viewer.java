@@ -27,11 +27,14 @@ public class Viewer extends Application {
             Scene scene = new Scene(root, screen.getWidth() * 0.9, screen.getHeight() * 0.8);
             // scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
 
+            stage.setFullScreenExitHint("Press F or ESC to exit full-screen mode.");
             scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
                 if (event.getCode().equals(KeyCode.LEFT))
                     controller.previousImage();
                 else if (event.getCode().equals(KeyCode.RIGHT))
                     controller.nextImage();
+                else if (event.getCode().equals(KeyCode.F))
+                    stage.setFullScreen(!stage.isFullScreen());
             });
 
             stage.setTitle("mimg viewer");

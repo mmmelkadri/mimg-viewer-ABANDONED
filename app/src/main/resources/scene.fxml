@@ -10,10 +10,10 @@
 <?import net.kurobako.gesturefx.GesturePane?>
 
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mimg.viewer.FXMLController">
    <center>
-       <SplitPane dividerPositions="0.15" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+       <SplitPane fx:id="splitPane" dividerPositions="0.15" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <ListView fx:id="listView" prefHeight="370.5" prefWidth="175.0" AnchorPane.bottomAnchor="0.0"
                          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
@@ -41,6 +41,7 @@
            </Menu>
            <Menu mnemonicParsing="false" text="Edit">
                <MenuItem onAction="#setHidden" mnemonicParsing="false" text="Show Hidden Folders"/>
+               <MenuItem onAction="#setHiddenList" mnemonicParsing="false" text="Hide List" accelerator="Ctrl+Tab" />
            </Menu>
            <Menu mnemonicParsing="false" text="Help">
                <MenuItem mnemonicParsing="false" text="About"/>
