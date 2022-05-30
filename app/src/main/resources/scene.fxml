@@ -41,10 +41,11 @@
            </Menu>
            <Menu mnemonicParsing="false" text="Edit">
                <MenuItem onAction="#setHidden" mnemonicParsing="false" text="Show Hidden Folders"/>
-               <MenuItem onAction="#setHiddenList" mnemonicParsing="false" text="Hide List" accelerator="Ctrl+Tab" />
+               <MenuItem onAction="#setHiddenList" mnemonicParsing="false" text="Hide List" accelerator="Shortcut+A" />
            </Menu>
-           <Menu mnemonicParsing="false" text="Help">
-               <MenuItem mnemonicParsing="false" text="About"/>
+           <Menu mnemonicParsing="false" text="View">
+               <MenuItem onAction="#rotateLeft" mnemonicParsing="false" text="Rotate Left" accelerator="Shortcut+L" />
+               <MenuItem onAction="#rotateRight" mnemonicParsing="false" text="Rotate Right" accelerator="Shortcut+R" />
            </Menu>
        </MenuBar>
    </top>

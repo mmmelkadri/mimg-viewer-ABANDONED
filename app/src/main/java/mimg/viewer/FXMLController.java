@@ -60,6 +60,17 @@ public class FXMLController {
         }
     }
 
+    @FXML
+
+    void rotateLeft() {
+        gesturePane.setRotate(gesturePane.getRotate() - 90);
+    }
+
+    @FXML
+    void rotateRight() {
+        gesturePane.setRotate(gesturePane.getRotate() + 90);
+    }
+
     void previousImage() {
         int index = listView.getSelectionModel().getSelectedIndex();
         String[] items = listView.getItems().toArray(new String[0]);
@@ -177,6 +188,9 @@ public class FXMLController {
         listView.getItems().clear();
         if (curr_dir.getParent() != null)
             listView.getItems().add("..");
+
+        if (curr_dir.list() == null) return; // prevents errors with network volumes
+
         // item is an image or a directory (not hidden or showHiddenFolders)
         listView.getItems().addAll(curr_dir.list((dir, name) -> name.matches(imageRegex) ||
                 (Files.isDirectory(Paths.get(dir + "/" + name))) && (!name.startsWith(".") || showHiddenFolders)));
