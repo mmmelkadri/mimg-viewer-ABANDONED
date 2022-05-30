@@ -13,7 +13,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-public class Viewer extends Application {
+public class ImageViewer extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         try {

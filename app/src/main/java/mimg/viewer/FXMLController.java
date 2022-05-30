@@ -21,10 +21,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class FXMLController {
+    // TODO remove the next three lines
     private final String imageRegex = "(.+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)";
     private boolean showHiddenFolders = false, showList = true;
     private final ImageView imageView = new ImageView();
     private Stage stage;
+    ImageModel imageModel = new ImageModel();
     @FXML private SplitPane splitPane;
     @FXML private AnchorPane imageAnchor;
     @FXML private MenuBar menuBar;
@@ -61,7 +63,6 @@ public class FXMLController {
     }
 
     @FXML
-
     void rotateLeft() {
         gesturePane.setRotate(gesturePane.getRotate() - 90);
     }
@@ -73,38 +74,24 @@ public class FXMLController {
 
     void previousImage() {
         int index = listView.getSelectionModel().getSelectedIndex();
-        String[] items = listView.getItems().toArray(new String[0]);
-        int l = items.length;
 
         if (index < 0) return; // no selection made
 
-        // below equation needed to make java modulo non-negative
-        for (int i = (((index - 1) % l) + l) % l; i != index; i = (((i - 1) % l) + l) % l) {
-            if (items[i].matches(imageRegex)) {
-                listView.getSelectionModel().select(i);
-                setImg(items[i]);
-                setCanvas();
-                return;
-            }
-        }
+        String previousImg = imageModel.getPreviousImage(listView.getItems().toArray(new String[0]), index);
+
+        setImg(previousImg);
+        setCanvas();
     }
 
     void nextImage() {
         int index = listView.getSelectionModel().getSelectedIndex();
-        String[] items = listView.getItems().toArray(new String[0]);
-        int l = items.length;
 
         if (index < 0) return; // no selection made
 
-        // below equation needed to make java modulo non-negative
-        for (int i = (((index + 1) % l) + l) % l; i != index; i = (((i + 1) % l) + l) % l) {
-            if (items[i].matches(imageRegex)) {
-                listView.getSelectionModel().select(i);
-                setImg(items[i]);
-                setCanvas();
-                return;
-            }
-        }
+        String nextImg = imageModel.getNextImage(listView.getItems().toArray(new String[0]), index);
+
+        setImg(nextImg);
+        setCanvas();
     }
 
     @FXML
@@ -127,12 +114,10 @@ public class FXMLController {
 
         File file = fileChooser.showOpenDialog(stage);
         setDir(file.getParent());
-        setImg(file.getName());
-
-        setCanvas();
         setList();
 
-        listView.getSelectionModel().select(file.getName());
+        setImg(file.getName());
+        setCanvas();
     }
 
     public void initialize() {
@@ -212,6 +197,7 @@ public class FXMLController {
 
     void setImg(String name) {
         try {
+            listView.getSelectionModel().select(name);
             curr_img = new Image(curr_dir.toURI() + name);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
