@@ -23,24 +23,18 @@ import java.nio.file.Paths;
 public class FXMLController {
     // TODO remove the next three lines
     private final String imageRegex = "(.+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)";
-    private boolean showHiddenFolders = false, showList = true;
     private final ImageView imageView = new ImageView();
     private Stage stage;
-    ImageModel imageModel = new ImageModel();
+    ImageModel imageModel = new ImageModel(stage);
     @FXML private SplitPane splitPane;
     @FXML private AnchorPane imageAnchor;
     @FXML private MenuBar menuBar;
     @FXML private GesturePane gesturePane;
     @FXML private ListView<String> listView;
 
-    private File curr_dir = new File(System.getProperty("user.dir"));
-    private Image curr_img = null;
-
     @FXML
     private void setHidden(ActionEvent event) {
-        showHiddenFolders = !showHiddenFolders;
-
-        if (showHiddenFolders)
+        if (imageModel.setHiddenFolders())
             ((MenuItem) event.getSource()).setText("Hide Hidden Folders");
         else
             ((MenuItem) event.getSource()).setText("Show Hidden Folders");
@@ -50,18 +44,18 @@ public class FXMLController {
 
     @FXML
     void setHiddenList(ActionEvent event) {
-        showList = !showList;
-        // TODO find better solution than setPrefWidth
-        if (showList) {
+        double position = imageModel.setHiddenList();
+
+        if (position > 0) {
             ((MenuItem) event.getSource()).setText("Hide List");
-            splitPane.setDividerPosition(0, 0.15);
-        }
-        else {
+            splitPane.setDividerPosition(0, position);
+        } else {
             ((MenuItem) event.getSource()).setText("Show List");
-            splitPane.setDividerPosition(0, 0);
+            splitPane.setDividerPosition(0, position);
         }
     }
 
+    // TODO fix zoomed in rotate
     @FXML
     void rotateLeft() {
         gesturePane.setRotate(gesturePane.getRotate() - 90);
@@ -80,7 +74,6 @@ public class FXMLController {
         String previousImg = imageModel.getPreviousImage(listView.getItems().toArray(new String[0]), index);
 
         setImg(previousImg);
-        setCanvas();
     }
 
     void nextImage() {
@@ -91,33 +84,15 @@ public class FXMLController {
         String nextImg = imageModel.getNextImage(listView.getItems().toArray(new String[0]), index);
 
         setImg(nextImg);
-        setCanvas();
     }
 
     @FXML
     private void openImg() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Image");
-
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("All Files", "*.jpeg", "*.jpg", "*.png", "*.webp",
-                        "*.bmp", "*.gif", "*.tiff", "*.tif", "*.JPG","*.JPEG", "*.PNG", "*.TIFF", "*.TIF"),
-                new FileChooser.ExtensionFilter(".jpg files", "*.jpg", "*.jpeg",
-                        "*.JPG", "*.JPEG"),
-                new FileChooser.ExtensionFilter(".png files", "*.PNG", "*.png"),
-                new FileChooser.ExtensionFilter(".bmp files", "*.bmp"),
-                new FileChooser.ExtensionFilter(".webp files", "*.webp"),
-                new FileChooser.ExtensionFilter(".gif files", "*.gif"),
-                new FileChooser.ExtensionFilter(".tiff files", "*.tif", "*.tiff",
-                        "*.TIF", "*.TIFF")
-        );
-
-        File file = fileChooser.showOpenDialog(stage);
-        setDir(file.getParent());
+        File file = imageModel.openImageFile();
+        imageModel.setCurrDir(file.getParent());
         setList();
 
         setImg(file.getName());
-        setCanvas();
     }
 
     public void initialize() {
@@ -128,7 +103,6 @@ public class FXMLController {
 
         menuBar.setUseSystemMenuBar(true);
 
-        setCanvas();
         setList();
 
         listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -138,17 +112,15 @@ public class FXMLController {
             if (listView.getSelectionModel().getSelectedItem()
                     .matches(imageRegex)) {
                 setImg(newValue);
-                setCanvas();
             } else {
                 if (newValue.equals(".."))
-                    setDir(curr_dir.getParent());
+                    imageModel.setCurrDir(imageModel.getCurrDir().getParent());
                 else
-                    setDir(curr_dir.toString() + "/" + newValue);
+                    imageModel.setCurrDir(imageModel.getCurrDir().toString() + "/" + newValue);
 
                 Platform.runLater(() -> {
                     listView.getSelectionModel().clearSelection();
                     setList();
-                    setCanvas();
                 });
             }
         });
@@ -169,36 +141,14 @@ public class FXMLController {
         });
     }
 
-    void setList() {
-        listView.getItems().clear();
-        if (curr_dir.getParent() != null)
-            listView.getItems().add("..");
-
-        if (curr_dir.list() == null) return; // prevents errors with network volumes
-
-        // item is an image or a directory (not hidden or showHiddenFolders)
-        listView.getItems().addAll(curr_dir.list((dir, name) -> name.matches(imageRegex) ||
-                (Files.isDirectory(Paths.get(dir + "/" + name))) && (!name.startsWith(".") || showHiddenFolders)));
-    }
-
-    void setCanvas() {
-        gesturePane.reset();
-        imageView.setImage(curr_img);
-    }
-
-    void setDir(String path) {
-        try {
-            curr_dir = new File(path);
-            curr_img = null;
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-    }
+    void setList() { listView.getItems().setAll(imageModel.getCurrDirFiles()); }
 
     void setImg(String name) {
         try {
             listView.getSelectionModel().select(name);
-            curr_img = new Image(curr_dir.toURI() + name);
+            imageModel.setCurrImg(new Image(imageModel.getCurrDir().toURI() + name));
+            gesturePane.reset();
+            imageView.setImage(imageModel.getCurrImg());
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
