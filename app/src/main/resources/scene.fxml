@@ -13,12 +13,12 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mimg.viewer.ImageController">
    <center>
-       <SplitPane fx:id="splitPane" dividerPositions="0.15" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-               <ListView fx:id="listView" prefHeight="370.5" prefWidth="175.0" AnchorPane.bottomAnchor="0.0"
+       <SplitPane fx:id="splitPane" dividerPositions="0.15" BorderPane.alignment="CENTER">
+           <AnchorPane>
+               <ListView fx:id="listView" AnchorPane.bottomAnchor="0.0"
                          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
            </AnchorPane>
-           <AnchorPane fx:id="imageAnchor" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+           <AnchorPane fx:id="imageAnchor">
                <BorderPane AnchorPane.bottomAnchor="0.0"
                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                    <center>

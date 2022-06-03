@@ -3,6 +3,7 @@ package mimg.viewer;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -88,6 +89,7 @@ public class ImageController {
     public void initialize() {
         imageView.fitWidthProperty().bind(imageAnchor.widthProperty());
         imageView.fitHeightProperty().bind(imageAnchor.heightProperty());
+
         imageView.setPreserveRatio(true);
 
         gesturePane.setContent(imageView);
