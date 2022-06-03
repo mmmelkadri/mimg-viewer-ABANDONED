@@ -8,21 +8,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import net.kurobako.gesturefx.GesturePane;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
-public class FXMLController {
-    // TODO remove the next three lines
-    private final String imageRegex = "(.+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)";
+public class ImageController {
     private final ImageView imageView = new ImageView();
     private Stage stage;
     ImageModel imageModel = new ImageModel(stage);
@@ -55,7 +46,8 @@ public class FXMLController {
         }
     }
 
-    // TODO fix zoomed in rotate
+    // TODO fix rotate not filling the splitPane, zoom is also broken on rotated images
+    // maybe use setViewport on imageView
     @FXML
     void rotateLeft() {
         gesturePane.setRotate(gesturePane.getRotate() - 90);
@@ -72,7 +64,6 @@ public class FXMLController {
         if (index < 0) return; // no selection made
 
         String previousImg = imageModel.getPreviousImage(listView.getItems().toArray(new String[0]), index);
-
         setImg(previousImg);
     }
 
@@ -82,7 +73,6 @@ public class FXMLController {
         if (index < 0) return; // no selection made
 
         String nextImg = imageModel.getNextImage(listView.getItems().toArray(new String[0]), index);
-
         setImg(nextImg);
     }
 
@@ -99,7 +89,9 @@ public class FXMLController {
         imageView.fitWidthProperty().bind(imageAnchor.widthProperty());
         imageView.fitHeightProperty().bind(imageAnchor.heightProperty());
         imageView.setPreserveRatio(true);
+
         gesturePane.setContent(imageView);
+        gesturePane.setHbarPolicy(GesturePane.ScrollBarPolicy.NEVER);
 
         menuBar.setUseSystemMenuBar(true);
 
@@ -109,8 +101,7 @@ public class FXMLController {
             // TODO understand why line below fixes bug
             if (newValue == null) return;
 
-            if (listView.getSelectionModel().getSelectedItem()
-                    .matches(imageRegex)) {
+            if (imageModel.isImg(listView.getSelectionModel().getSelectedItem())) {
                 setImg(newValue);
             } else {
                 if (newValue.equals(".."))
@@ -133,13 +124,15 @@ public class FXMLController {
                 setText(item);
                 if (empty || item == null)
                     setGraphic(null);
-                else if (!item.matches(imageRegex))
+                else if (!imageModel.isImg(item))
                     setTextFill(Color.ROYALBLUE);
                 else
                     setTextFill(Color.BLACK);
             }
         });
     }
+
+    void setStage (Stage stage) { this.stage = stage; }
 
     void setList() { listView.getItems().setAll(imageModel.getCurrDirFiles()); }
 
@@ -152,9 +145,5 @@ public class FXMLController {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-    }
-
-    void setStage(Stage stage) {
-        this.stage = stage;
     }
 }

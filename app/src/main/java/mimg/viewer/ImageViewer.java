@@ -19,7 +19,7 @@ public class ImageViewer extends Application {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/scene.fxml"));
             Parent root = loader.load();
-            FXMLController controller = loader.getController();
+            ImageController controller = loader.getController();
             controller.setStage(stage);
 
             // TODO if opened with image, set image as curr_img

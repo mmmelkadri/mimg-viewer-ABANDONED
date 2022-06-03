@@ -1,17 +1,8 @@
 package mimg.viewer;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import net.kurobako.gesturefx.GesturePane;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -26,7 +17,6 @@ public class ImageModel {
     private final String imageRegex = "(.+(\\.(?i)(jpe?g|png|webp|bmp|gif|tiff))$)";
     private final Stage stage;
     private boolean showHiddenFolders = false, showList = true;
-    private final ImageView imageView = new ImageView();
     private final FileChooser fileChooser = new FileChooser();
 
     ImageModel(Stage stage) {
@@ -43,6 +33,10 @@ public class ImageModel {
                 new FileChooser.ExtensionFilter(".tiff files", "*.tif", "*.tiff", "*.TIF", "*.TIFF")
         );
         fileChooser.setTitle("Open Image");
+    }
+
+    boolean isImg(String file) {
+        return file.matches(this.imageRegex);
     }
 
     void setCurrDir(String path) {
