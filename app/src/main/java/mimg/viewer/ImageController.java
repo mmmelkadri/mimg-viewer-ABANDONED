@@ -48,7 +48,7 @@ public class ImageController {
     }
 
     // TODO fix rotate not filling the splitPane, zoom is also broken on rotated images
-    // maybe use setViewport on imageView
+    // maybe zoom out gesturePane until entire image fits
     @FXML
     void rotateLeft() {
         gesturePane.setRotate(gesturePane.getRotate() - 90);

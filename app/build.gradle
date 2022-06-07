@@ -26,13 +26,28 @@ dependencies {
 }
 
 application {
-    mainClass = "mimg.viewer.ImageViewer"
+    mainClass = "mimg.viewer.Main"
     mainModule = "mimg"
 }
 
 jlink {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    forceMerge "javafx"
     launcher {
         name = 'mimg'
     }
 }
+
+/* Use when packing fat jar
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes["Main-Class"] = "mimg.viewer.Main"
+    }
+
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
+}
+ */
